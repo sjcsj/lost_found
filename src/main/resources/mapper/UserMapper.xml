@@ -1,0 +1,35 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.UserMapper">
+    <insert id="addUser">
+        insert
+        user (id, username, password, role, gender, avatar, created_at) values (null,
+        #{username},
+        #{password},
+        #{role},
+        #{gender},
+        #{avatar},
+        #{createdAt}
+        );
+    </insert>
+
+    <select id="selectByUsername" resultType="com.demo.lost_found.pojo.User">
+        select *
+        from user
+        where username = #{username}
+          and role = #{role};
+    </select>
+
+    <select id="selectByPhone" resultType="com.demo.lost_found.pojo.User">
+        select *
+        from user
+        where phone = #{phone}
+          and role = 'user'
+    </select>
+
+    <select id="selectByUsernameAllRole" resultType="com.demo.lost_found.pojo.User">
+        select *
+        from user
+        where username = #{username};
+    </select>
+</mapper>
