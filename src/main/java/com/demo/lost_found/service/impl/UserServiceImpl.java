@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService {
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", user.getId());
         String token = Auth0JwtUtils.sign(map);
-        // 将token存放到redis
-        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token, "", 30, TimeUnit.MINUTES);
+        // 将token存放到redis，value设置为用户id
+        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token, user1.getId() + "", 30, TimeUnit.MINUTES);
         return new BaseResponse(200, "登录成功", token);
     }
 
@@ -94,8 +94,8 @@ public class UserServiceImpl implements UserService {
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", user.getId());
         String token = Auth0JwtUtils.sign(map);
-        // 将token存放到redis
-        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token, "", 30, TimeUnit.MINUTES);
+        // 将token存放到redis，value设置为用户id
+        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token, user.getId() + "", 30, TimeUnit.MINUTES);
         return new BaseResponse<>(200, "登录成功", token);
     }
 
