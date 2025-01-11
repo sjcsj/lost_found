@@ -1,0 +1,73 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.UserAdminMapper">
+    <update id="updateById">
+        update user
+        set id         = #{id},
+            username   = #{username},
+            password   = #{password},
+            phone      = #{phone},
+            wechat_id  = #{wechatId},
+            role       = #{role},
+            gender     = #{gender},
+            avatar     = #{avatar},
+            created_at = #{createdAt},
+            updated_at = #{updatedAt},
+            deleted_at = #{deletedAt}
+        where id = #{id};
+    </update>
+
+    <select id="getUserListExact" resultType="com.demo.lost_found.pojo.User">
+        select *
+        from user where deleted_at is null and role = 'user'
+        <if test="username != null and username != ''">
+            and username = #{username}
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone = #{phone}
+        </if>
+        <if test="wechatId != null and wechatId != ''">
+            and wechat_id = #{wechatId}
+        </if>
+        <if test="gender != null and gender != ''">
+            and gender = #{gender}
+        </if>
+        order by created_at desc
+    </select>
+
+    <select id="getUserListFuzzy" resultType="com.demo.lost_found.pojo.User">
+        select *
+        from user
+        where deleted_at is null
+        and role = 'user'
+        <if test="username != null and username != ''">
+            and username LIKE CONCAT('%', #{username}, '%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone LIKE CONCAT('%', #{phone}, '%')
+        </if>
+        <if test="wechatId != null and wechatId != ''">
+            and wechat_id LIKE CONCAT('%', #{wechatId}, '%')
+        </if>
+        <if test="gender != null and gender != ''">
+            and gender LIKE CONCAT('%', #{gender}, '%')
+        </if>
+        order by created_at desc
+    </select>
+
+    <select id="getUserInfoById" resultType="com.demo.lost_found.pojo.User">
+        select *
+        from user
+        where id = #{id}
+          and deleted_at is null
+    </select>
+
+    <select id="selectByIds" resultType="com.demo.lost_found.pojo.User">
+        select *
+        from user
+        where id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

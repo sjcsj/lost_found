@@ -3,9 +3,11 @@
 <mapper namespace="com.demo.lost_found.mapper.UserMapper">
     <insert id="addUser">
         insert
-        user (id, username, password, role, gender, avatar, created_at) values (null,
+        user (id, username, password, phone, wechat_id, role, gender, avatar, created_at) values (null,
         #{username},
         #{password},
+        #{phone},
+        #{wechatId},
         #{role},
         #{gender},
         #{avatar},
