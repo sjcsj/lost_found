@@ -1,0 +1,67 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.BlackListMapper">
+    <insert id="insertInfo">
+        insert into blacklist (id, user_id, admin_id, deadline, status, reason, notes, created_at, updated_at)
+        values (null, #{userId}, #{adminId}, #{deadline}, #{status}, #{reason}, #{notes}, #{createdAt},
+                #{updatedAt});
+    </insert>
+
+    <update id="updateById">
+        update blacklist
+        set id         = #{id},
+            user_id    = #{userId},
+            admin_id   = #{adminId},
+            deadline   = #{deadline},
+            status     = #{status},
+            reason     = #{reason},
+            notes      = #{notes},
+            created_at = #{createdAt},
+            updated_at = #{updatedAt}
+        where id = #{id};
+    </update>
+
+    <update id="releaseUserById">
+        update blacklist
+        set deadline   = #{now},
+            status     = 2,
+            updated_at = #{now}
+        where id = #{id};
+    </update>
+
+    <select id="getBlackList" resultType="com.demo.lost_found.pojo.BlackList">
+        select * from blacklist
+        <where>
+            <if test="userIds != null and !userIds.isEmpty()">
+                user_id in
+                <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+                    #{userId}
+                </foreach>
+            </if>
+            <if test="adminIds != null and !adminIds.isEmpty()">
+                and admin_id in
+                <foreach collection="adminIds" item="adminId" open="(" close=")" separator=",">
+                    #{adminId}
+                </foreach>
+            </if>
+            <if test="status != null and status != 0">
+                and status = #{status}
+            </if>
+        </where>
+        order by created_at desc;
+    </select>
+
+    <select id="getUserStatus" resultType="com.demo.lost_found.pojo.BlackList">
+        select *
+        from blacklist
+        where user_id = #{userId}
+          and status = 1;
+    </select>
+
+    <select id="selectHistoryByUserId" resultType="com.demo.lost_found.pojo.BlackList">
+        select *
+        from blacklist
+        where user_id = #{id}
+        order by created_at desc
+    </select>
+</mapper>

@@ -19,4 +19,10 @@ public interface UserAdminMapper {
     List<User> selectByIds(@Param("ids") List<Integer> ids);
 
     void updateById(User i);
+
+    List<Integer> selectByUsernameExact(@Param("username") String username);
+
+    List<Integer> selectByUsernameFuzzy(@Param("username") String username);
+
+    String getUsernameById(@Param("id") Integer userId);
 }

@@ -70,4 +70,24 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="selectByUsernameExact" resultType="java.lang.Integer">
+        select id
+        from user
+        where username = #{username}
+          and role = 'user';
+    </select>
+
+    <select id="selectByUsernameFuzzy" resultType="java.lang.Integer">
+        select id
+        from user
+        where username like CONCAT('%', #{username}, '%')
+          and role = 'user';
+    </select>
+
+    <select id="getUsernameById" resultType="java.lang.String">
+        select username
+        from user
+        where id = #{id};
+    </select>
 </mapper>

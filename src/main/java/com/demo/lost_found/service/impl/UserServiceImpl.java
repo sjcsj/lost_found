@@ -7,9 +7,11 @@ import com.aliyun.tea.TeaException;
 import com.aliyun.teautil.models.RuntimeOptions;
 import com.demo.lost_found.contants.RedisConstants;
 import com.demo.lost_found.mapper.UserMapper;
+import com.demo.lost_found.pojo.BlackList;
 import com.demo.lost_found.pojo.User;
 import com.demo.lost_found.pojo.form.PhoneCodeForm;
 import com.demo.lost_found.rep.BaseResponse;
+import com.demo.lost_found.service.BlackListService;
 import com.demo.lost_found.service.UserService;
 import com.demo.lost_found.utils.Auth0JwtUtils;
 import com.demo.lost_found.utils.VerificationCodeUtils;
@@ -50,8 +52,11 @@ public class UserServiceImpl implements UserService {
     @Value("${minio.server-url}")
     private String minioUrl;
 
+    @Autowired
+    private BlackListService blackListService;
+
     @Override
-    public BaseResponse<String> login(User user) {
+    public BaseResponse login(User user) {
         String username = user.getUsername();
         String password = user.getPassword();
         String role = user.getRole();
@@ -66,6 +71,12 @@ public class UserServiceImpl implements UserService {
         if (!md5Lower(password).equals(user1.getPassword())) {
             return new BaseResponse(400, "密码错误", null);
         }
+        // 判断该用户是否被拉黑
+        BaseResponse<BlackList> userStatus = blackListService.getUserStatus(user1.getId());
+        if (userStatus.getCode() == 400) {
+            // 处于拉黑中
+            return new BaseResponse(403, "该用户处于拉黑状态", userStatus.getData());
+        }
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", user.getId());
         String token = Auth0JwtUtils.sign(map);
@@ -75,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public BaseResponse<String> loginByPhone(PhoneCodeForm phoneCodeForm) {
+    public BaseResponse loginByPhone(PhoneCodeForm phoneCodeForm) {
         String phone = phoneCodeForm.getPhone();
         String code = phoneCodeForm.getCode();
         // 查询redis中是否有该手机号
@@ -90,6 +101,12 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectByPhone(phone);
         if (user.getDeletedAt() != null) {
             return new BaseResponse<>(400, "该用户已被删除", null);
+        }
+        // 判断该用户是否被拉黑
+        BaseResponse<BlackList> userStatus = blackListService.getUserStatus(user.getId());
+        if (userStatus.getCode() == 400) {
+            // 处于拉黑中
+            return new BaseResponse(403, "该用户处于拉黑状态", userStatus.getData());
         }
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", user.getId());

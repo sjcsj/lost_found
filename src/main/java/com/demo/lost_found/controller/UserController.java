@@ -20,7 +20,7 @@ public class UserController {
 
     @PostMapping("/loginByUsername")
     @ApiOperation("用户名密码登录")
-    public BaseResponse<String> loginByUsername(@RequestBody User user) {
+    public BaseResponse loginByUsername(@RequestBody User user) {
         return userService.login(user);
     }
 
@@ -36,7 +36,7 @@ public class UserController {
      */
     @PostMapping("/loginByPhone")
     @ApiOperation("手机号验证码登录")
-    public BaseResponse<String> loginByPhone(@RequestBody PhoneCodeForm phoneCodeForm) {
+    public BaseResponse loginByPhone(@RequestBody PhoneCodeForm phoneCodeForm) {
         return userService.loginByPhone(phoneCodeForm);
     }
 
