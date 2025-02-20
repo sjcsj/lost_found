@@ -34,10 +34,15 @@ public class FileServiceImpl implements FileService {
     private MinioClient minioClient;
 
     @Override
-    public BaseResponse<String> upload(MultipartFile file) throws IOException {
+    public BaseResponse<String> upload(MultipartFile file, String type) throws IOException {
         // 生成唯一的对象名称（避免文件名冲突）
         String originalFilename = file.getOriginalFilename();
-        String objectName = MinioConstants.USER_AVATAR + "/" + System.currentTimeMillis() + "_" + originalFilename;
+        String objectName = "";
+        if ("avatar".equals(type)) {
+            objectName = MinioConstants.USER_AVATAR + "/" + System.currentTimeMillis() + "_" + originalFilename;
+        } else if ("carouselImage".equals(type)) {
+            objectName = MinioConstants.USER_CAROUSEL_IMAGE + "/" + System.currentTimeMillis() + "_" + originalFilename;
+        }
 
         try (InputStream inputStream = file.getInputStream()) {
             // 获取文件的输入流并上传到 MinIO

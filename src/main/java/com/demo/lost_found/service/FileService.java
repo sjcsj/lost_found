@@ -9,7 +9,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public interface FileService {
-    BaseResponse<String> upload(MultipartFile file) throws IOException;
+    BaseResponse<String> upload(MultipartFile file, String type) throws IOException;
 
     void delete(String url) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
 }

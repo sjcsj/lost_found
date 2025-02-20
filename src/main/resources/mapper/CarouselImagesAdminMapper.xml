@@ -1,0 +1,50 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.CarouselImagesAdminMapper">
+    <insert id="add">
+        insert into carousel_images (image_url, created_at, jump_link, sort, clicks, enable)
+        values (#{imageUrl}, #{createdAt}, #{jumpLink}, #{sort}, #{clicks}, #{enable});
+    </insert>
+    <update id="increaseClicks">
+        update carousel_images
+        set clicks = clicks + 1
+        where id = #{id};
+    </update>
+    <update id="enable">
+        update carousel_images
+        set enable = #{enable}
+        where id = #{id};
+    </update>
+
+    <update id="update">
+        update carousel_images
+        set jump_link = #{jumpLink},
+            sort     = #{sort}
+        where id = #{id};
+    </update>
+
+    <delete id="delete">
+        delete
+        from carousel_images
+        where id = #{id};
+    </delete>
+
+    <select id="getListByClicks" resultType="com.demo.lost_found.pojo.CarouselImages">
+        select *
+        from carousel_images
+        where enable = 'true'
+        order by clicks desc;
+    </select>
+
+    <select id="getListBySort" resultType="com.demo.lost_found.pojo.CarouselImages">
+        select *
+        from carousel_images
+        where enable = 'true'
+        order by sort asc;
+    </select>
+    <select id="getById" resultType="com.demo.lost_found.pojo.CarouselImages">
+        select *
+        from carousel_images
+        where id = #{id};
+    </select>
+</mapper>

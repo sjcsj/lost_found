@@ -28,7 +28,15 @@ public class FileController {
      */
     @PostMapping("/upload")
     public BaseResponse<String> upload(@RequestPart("file") MultipartFile file) throws IOException {
-        return fileService.upload(file);
+        return fileService.upload(file, "avatar");
+    }
+
+    /**
+     * 轮播图上传，返回url，专门用于上传轮播图
+     */
+    @PostMapping("/uploadCarouselImage")
+    public BaseResponse<String> uploadCarouselImage(@RequestPart("file") MultipartFile file) throws IOException {
+        return fileService.upload(file, "carouselImage");
     }
 
     /**

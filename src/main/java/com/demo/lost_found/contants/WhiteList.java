@@ -25,6 +25,12 @@ public class WhiteList {
          * 图片上传接口
          */
         WHITE_LIST.add("/file/upload");
+        WHITE_LIST.add("/file/uploadCarouselImage");
         WHITE_LIST.add("/file/delete");
+        /**
+         * 轮播图接口
+         */
+        WHITE_LIST.add("/admin/carouselImages/getList");
+        WHITE_LIST.add("/admin/carouselImages/increaseClicks");
     }
 }
