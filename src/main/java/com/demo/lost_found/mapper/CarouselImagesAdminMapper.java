@@ -23,4 +23,6 @@ public interface CarouselImagesAdminMapper {
     void add(CarouselImages carouselImages);
 
     CarouselImages getById(@Param("id") Integer id);
+
+    List<CarouselImages> getListBySortAndEnable();
 }

@@ -46,6 +46,17 @@ public class CarouselImagesAdminServiceImpl implements CarouselImagesAdminServic
     }
 
     @Override
+    public BaseResponse<List<CarouselImages>> getListFront() {
+        // 按排序字段排序
+        List<CarouselImages> list = carouselImagesAdminMapper.getListBySortAndEnable();
+        list.forEach(e -> {
+            Boolean a = "true".equals(e.getEnable()) ? true : false;
+            e.setEnable1(a);
+        });
+        return new BaseResponse<>(200, "查询成功", list);
+    }
+
+    @Override
     public void increaseClicks(Integer id) {
         carouselImagesAdminMapper.increaseClicks(id);
     }

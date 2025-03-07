@@ -32,19 +32,23 @@
     <select id="getListByClicks" resultType="com.demo.lost_found.pojo.CarouselImages">
         select *
         from carousel_images
-        where enable = 'true'
         order by clicks desc;
     </select>
 
     <select id="getListBySort" resultType="com.demo.lost_found.pojo.CarouselImages">
         select *
         from carousel_images
-        where enable = 'true'
         order by sort asc;
     </select>
     <select id="getById" resultType="com.demo.lost_found.pojo.CarouselImages">
         select *
         from carousel_images
         where id = #{id};
+    </select>
+    <select id="getListBySortAndEnable" resultType="com.demo.lost_found.pojo.CarouselImages">
+        select *
+        from carousel_images
+        where enable = 'true'
+        order by sort asc;
     </select>
 </mapper>

@@ -31,6 +31,7 @@ public class WhiteList {
          * 轮播图接口
          */
         WHITE_LIST.add("/admin/carouselImages/getList");
+        WHITE_LIST.add("/admin/carouselImages/getListFront");
         WHITE_LIST.add("/admin/carouselImages/increaseClicks");
     }
 }

@@ -21,12 +21,21 @@ public class CarouselImagesAdminController {
     private CarouselImagesAdminService carouselImagesAdminService;
 
     /**
-     * 获取轮播图列表，type为1是按排序字段排序，type为2是按点击次数排序
+     * 后台获取轮播图列表，type为1是按排序字段排序，type为2是按点击次数排序
      * @return
      */
     @GetMapping("/getList")
     public BaseResponse<List<CarouselImages>> getList(@RequestParam("type") String type) {
         return carouselImagesAdminService.getList(type);
+    }
+
+    /**
+     * 前台获取轮播图列表，按排序字段排序
+     * @return
+     */
+    @GetMapping("/getListFront")
+    public BaseResponse<List<CarouselImages>> getListFront() {
+        return carouselImagesAdminService.getListFront();
     }
 
     /**

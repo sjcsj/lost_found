@@ -12,6 +12,8 @@ import java.util.List;
 public interface CarouselImagesAdminService {
     BaseResponse<List<CarouselImages>> getList(String type);
 
+    BaseResponse<List<CarouselImages>> getListFront();
+
     void increaseClicks(Integer id);
 
     BaseResponse enable(Integer id, String enable);
