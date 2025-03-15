@@ -1,10 +1,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.demo.lost_found.mapper.AuthorityAdminMapper">
+    <insert id="addAuthority">
+        insert into authority (url, description, enable)
+        values (#{url}, #{description}, #{enable});
+    </insert>
+    <update id="enable">
+        update authority
+        set enable = #{enable}
+        where id = #{id};
+    </update>
+    <update id="delete">
+        update authority
+        set deleted_at = #{now}
+        where id = #{id};
+    </update>
+    <update id="update">
+        update authority
+        set url         = #{url},
+            description = #{description}
+        where id = #{id};
+    </update>
 
     <select id="getAll" resultType="com.demo.lost_found.pojo.Authority">
         select *
         from authority
         where deleted_at is null
+        <if test="url != null and url != ''">
+            and url LIKE CONCAT('%', #{url}, '%')
+        </if>
+        <if test="description != null and description != ''">
+            and description LIKE CONCAT('%', #{description}, '%')
+        </if>
+        <if test="enable != null and enable != ''">
+            and enable = #{enable}
+        </if>
+        order by id desc;
+    </select>
+    <select id="getEnable" resultType="com.demo.lost_found.pojo.Authority">
+        select *
+        from authority
+        where deleted_at is null
+          and enable = 'true';
     </select>
 </mapper>

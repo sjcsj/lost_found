@@ -103,13 +103,15 @@ public class AuthInterceptor implements HandlerInterceptor {
             }
             // 没有绑定手机号的用户无法访问前台的一部分接口
             // 通过查表来得到这些接口
-            List<Authority> authorityList = authorityAdminService.getAll();
+            List<Authority> authorityList = authorityAdminService.getEnable();
             if (user.getPhone() == null) {
-                if (authorityList.contains(requestURI)) {
-                    log.info("当前用户没有绑定手机号，无法访问");
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.setHeader("error-message", URLEncoder.encode("绑定手机号后才能使用该功能", "utf8"));
-                    return false;
+                for (Authority item : authorityList) {
+                    if (requestURI.equals(item.getUrl())) {
+                        log.info("当前用户没有绑定手机号，无法访问");
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.setHeader("error-message", URLEncoder.encode("绑定手机号后才能使用该功能", "utf8"));
+                        return false;
+                    }
                 }
             }
         } else if (RoleConstants.ADMIN.equals(user.getRole())) {
