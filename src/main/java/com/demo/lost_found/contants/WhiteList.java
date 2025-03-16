@@ -26,6 +26,7 @@ public class WhiteList {
          */
         WHITE_LIST.add("/file/upload");
         WHITE_LIST.add("/file/uploadCarouselImage");
+        WHITE_LIST.add("/file/uploadPromotionalVideos");
         WHITE_LIST.add("/file/delete");
         /**
          * 轮播图接口
@@ -33,5 +34,9 @@ public class WhiteList {
         WHITE_LIST.add("/admin/carouselImages/getList");
         WHITE_LIST.add("/admin/carouselImages/getListFront");
         WHITE_LIST.add("/admin/carouselImages/increaseClicks");
+        /**
+         * 宣传视频接口
+         */
+        WHITE_LIST.add("/admin/promotionalVideos/getList");
     }
 }

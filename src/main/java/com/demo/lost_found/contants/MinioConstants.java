@@ -14,4 +14,10 @@ public class MinioConstants {
      * 存放轮播图
      */
     public static final String USER_CAROUSEL_IMAGE = "carousel-image";
+
+    /**
+     * 存放宣传视频
+     */
+    public static final String PROMOTIONAL_VIDEOS = "promotional-videos";
+
 }

@@ -40,6 +40,14 @@ public class FileController {
     }
 
     /**
+     * 视频上传，返回url，专门用于上传宣传视频
+     */
+    @PostMapping("/uploadPromotionalVideos")
+    public BaseResponse<String> uploadPromotionalVideos(@RequestPart("file") MultipartFile file) throws IOException {
+        return fileService.upload(file, "promotionalVideos");
+    }
+
+    /**
      * 删除文件，适用于所有图片类型
      */
     @GetMapping("/delete")

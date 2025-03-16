@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
  * 用户管理
  * 后台相关接口必须以/admin开头
  */
-// TODO 只剩拉黑功能没有完成
 @RestController
 @RequestMapping("/admin/user")
 public class UserAdminController {

@@ -108,7 +108,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 for (Authority item : authorityList) {
                     if (requestURI.equals(item.getUrl())) {
                         log.info("当前用户没有绑定手机号，无法访问");
-                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.setStatus(407);
                         response.setHeader("error-message", URLEncoder.encode("绑定手机号后才能使用该功能", "utf8"));
                         return false;
                     }
