@@ -1,6 +1,7 @@
 package com.demo.lost_found.service;
 
 import com.demo.lost_found.pojo.User;
+import com.demo.lost_found.pojo.form.ChangePasswordForm;
 import com.demo.lost_found.pojo.form.UserAdminForm;
 import com.demo.lost_found.rep.BaseResponse;
 
@@ -23,4 +24,6 @@ public interface UserAdminService {
     BaseResponse<String> editUser(User user);
 
     BaseResponse<String> reSetPassword(User user);
+
+    BaseResponse changePasswordForm(ChangePasswordForm changePasswordForm);
 }

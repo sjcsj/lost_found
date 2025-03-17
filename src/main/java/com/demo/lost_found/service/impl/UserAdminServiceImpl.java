@@ -6,6 +6,7 @@ import com.demo.lost_found.contants.RoleConstants;
 import com.demo.lost_found.mapper.UserAdminMapper;
 import com.demo.lost_found.mapper.UserMapper;
 import com.demo.lost_found.pojo.User;
+import com.demo.lost_found.pojo.form.ChangePasswordForm;
 import com.demo.lost_found.pojo.form.UserAdminForm;
 import com.demo.lost_found.rep.BaseResponse;
 import com.demo.lost_found.service.UserAdminService;
@@ -120,6 +121,20 @@ public class UserAdminServiceImpl implements UserAdminService {
         user.setUpdatedAt(DateUtil.now());
         userAdminMapper.updateById(user);
         return new BaseResponse<>(200, "", newPassword);
+    }
+
+    @Override
+    public BaseResponse changePasswordForm(ChangePasswordForm changePasswordForm) {
+        User user = userAdminMapper.getUserInfoById(changePasswordForm.getId());
+        if (!md5Lower(changePasswordForm.getPassword()).equals(user.getPassword())) {
+            return new BaseResponse(400, "旧密码不正确，请重新输入", null);
+        }
+        if (changePasswordForm.getPassword().equals(changePasswordForm.getNewPassword())) {
+            return new BaseResponse(400, "新密码与旧密码不能相同，请重新输入", null);
+        }
+        user.setPassword(md5Lower(changePasswordForm.getNewPassword()));
+        userAdminMapper.updateById(user);
+        return new BaseResponse(200, "修改成功", null);
     }
 
 }

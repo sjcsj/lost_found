@@ -1,12 +1,17 @@
 package com.demo.lost_found.controller.admin;
 
+import com.demo.lost_found.contants.RedisConstants;
 import com.demo.lost_found.pojo.User;
+import com.demo.lost_found.pojo.context.UserContext;
+import com.demo.lost_found.pojo.form.ChangePasswordForm;
 import com.demo.lost_found.pojo.form.UserAdminForm;
 import com.demo.lost_found.rep.BaseResponse;
 import com.demo.lost_found.service.UserAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
@@ -24,6 +29,9 @@ public class UserAdminController {
 
     @Autowired
     private UserAdminService userAdminService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 精确搜索，模糊搜索
@@ -91,6 +99,33 @@ public class UserAdminController {
     public void export(@RequestBody UserAdminForm userAdminForm, HttpServletResponse httpServletResponse) throws IOException {
         List<User> users = userAdminService.getUserList(userAdminForm);
         userAdminService.export(users, httpServletResponse);
+    }
+
+    /**
+     * 获取当前用户信息
+     */
+    @GetMapping("/getUser")
+    public BaseResponse<User> getUser() {
+        return new BaseResponse<>(200, "获取成功", UserContext.getCurrentUser());
+    }
+
+    /**
+     * 退出登录
+     */
+    @GetMapping("/logout")
+    public BaseResponse logout(HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+        String token = authorization.substring(7);
+        stringRedisTemplate.delete(RedisConstants.TOKEN_PREFIX + token);
+        return new BaseResponse(200, "退出成功", null);
+    }
+
+    /**
+     * 修改密码
+     */
+    @PostMapping("/changePasswordForm")
+    public BaseResponse changePasswordForm(@RequestBody ChangePasswordForm changePasswordForm){
+        return userAdminService.changePasswordForm(changePasswordForm);
     }
 
 
