@@ -38,5 +38,9 @@ public class WhiteList {
          * 宣传视频接口
          */
         WHITE_LIST.add("/admin/promotionalVideos/getList");
+        /**
+         * 物品类别接口
+         */
+        WHITE_LIST.add("/admin/category/getList");
     }
 }

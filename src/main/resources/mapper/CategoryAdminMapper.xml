@@ -1,0 +1,37 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.CategoryAdminMapper">
+    <insert id="add">
+        insert
+        category (category_name, `count`, sort) values (
+        #{categoryName},
+        #{count},
+        #{sort}
+        );
+    </insert>
+    <update id="update">
+        update category
+        set category_name = #{categoryName},
+            sort          = #{sort}
+        where id = #{id};
+    </update>
+    <delete id="delete">
+        delete
+        from category
+        where id = #{id};
+    </delete>
+
+    <select id="getListBySort" resultType="com.demo.lost_found.pojo.Category">
+        select *
+        from category
+        order by sort asc
+    </select>
+
+    <select id="getListByClicks" resultType="com.demo.lost_found.pojo.Category">
+        select *
+        from category
+        order by count desc
+    </select>
+
+
+</mapper>
