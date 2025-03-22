@@ -48,6 +48,22 @@ public class FileController {
     }
 
     /**
+     * 失物招领图片上传，返回url，专门用于上传失物招领图片
+     */
+    @PostMapping("/uploadLostAndFound")
+    public BaseResponse<String> uploadLostAndFound(@RequestPart("file") MultipartFile file) throws IOException {
+        return fileService.upload(file, "lostAndFound");
+    }
+
+    /**
+     * 物品挂失图片上传，返回url，专门用于上传物品挂失图片
+     */
+    @PostMapping("/uploadLostAndReport")
+    public BaseResponse<String> uploadLostAndReport(@RequestPart("file") MultipartFile file) throws IOException {
+        return fileService.upload(file, "lostAndReport");
+    }
+
+    /**
      * 删除文件，适用于所有图片类型
      */
     @GetMapping("/delete")

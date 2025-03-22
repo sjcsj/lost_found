@@ -1,14 +1,19 @@
 package com.demo.lost_found.controller;
 
 import com.demo.lost_found.pojo.User;
+import com.demo.lost_found.pojo.context.UserContext;
 import com.demo.lost_found.pojo.form.PhoneCodeForm;
+import com.demo.lost_found.pojo.vo.ContactWayVO;
 import com.demo.lost_found.rep.BaseResponse;
 import com.demo.lost_found.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.License;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -50,5 +55,23 @@ public class UserController {
         }
         userService.sendPhoneCode(phone);
         return new BaseResponse(200, "验证码发送成功", null);
+    }
+
+    /**
+     * 有手机号的用户才能访问
+     * @return
+     */
+    @GetMapping("/getContactWay")
+    @ApiOperation("获取当前用户拥有的联系方式")
+    public BaseResponse<List<ContactWayVO>> getContactWay() {
+        return userService.getContactWay();
+    }
+
+    /**
+     * 获取当前用户id
+     */
+    @GetMapping("/getUserId")
+    public BaseResponse<Integer> getUserId() {
+        return new BaseResponse<>(200, "获取成功", UserContext.getCurrentUser().getId());
     }
 }

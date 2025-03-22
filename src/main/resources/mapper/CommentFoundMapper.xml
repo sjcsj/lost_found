@@ -1,0 +1,14 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.CommentFoundMapper">
+    <insert id="add">
+        insert into comment_found (lost_and_found_id, user_id, comment)
+        values (#{id}, #{userId}, #{comment});
+    </insert>
+
+    <select id="getCommentById" resultType="com.demo.lost_found.pojo.CommentFound">
+        select *
+        from comment_found
+        where lost_and_found_id = #{id};
+    </select>
+</mapper>

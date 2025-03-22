@@ -13,6 +13,7 @@ import com.demo.lost_found.service.UserAdminService;
 import com.demo.lost_found.utils.Auth0JwtUtils;
 import com.github.javafaker.Bool;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -104,11 +105,11 @@ public class AuthInterceptor implements HandlerInterceptor {
             // 没有绑定手机号的用户无法访问前台的一部分接口
             // 通过查表来得到这些接口
             List<Authority> authorityList = authorityAdminService.getEnable();
-            if (user.getPhone() == null) {
+            if (StringUtils.isEmpty(user.getPhone())) {
                 for (Authority item : authorityList) {
                     if (requestURI.equals(item.getUrl())) {
                         log.info("当前用户没有绑定手机号，无法访问");
-                        response.setStatus(407);
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                         response.setHeader("error-message", URLEncoder.encode("绑定手机号后才能使用该功能", "utf8"));
                         return false;
                     }

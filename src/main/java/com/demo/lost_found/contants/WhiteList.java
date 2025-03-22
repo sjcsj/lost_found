@@ -28,6 +28,8 @@ public class WhiteList {
         WHITE_LIST.add("/file/uploadCarouselImage");
         WHITE_LIST.add("/file/uploadPromotionalVideos");
         WHITE_LIST.add("/file/delete");
+        WHITE_LIST.add("/file/uploadLostAndFound");
+        WHITE_LIST.add("/file/uploadLostAndReport");
         /**
          * 轮播图接口
          */

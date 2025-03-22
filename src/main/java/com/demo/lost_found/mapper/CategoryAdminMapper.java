@@ -17,4 +17,8 @@ public interface CategoryAdminMapper {
     void update(Category category);
 
     void delete(@Param("id") Integer id);
+
+    void incr(@Param("id") Integer categoryId);
+
+    Category getById(@Param("id") Integer id);
 }

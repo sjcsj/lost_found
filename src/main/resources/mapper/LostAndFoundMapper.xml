@@ -1,0 +1,40 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.LostAndFoundMapper">
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into lost_and_found (name, category_id, pickup_address, pickup_time, detail, user_id, username, phone,
+                                    wechat_id,
+                                    status, check_status, failure_reason, created_at)
+        values (#{name},
+                #{categoryId},
+                #{pickupAddress},
+                #{pickupTime},
+                #{detail},
+                #{userId},
+                #{username},
+                #{phone},
+                #{wechatId},
+                #{status},
+                #{checkStatus},
+                #{failureReason},
+                #{createdAt});
+    </insert>
+    <update id="mark">
+        update lost_and_found
+        set status = '已认领'
+        where id = #{id};
+    </update>
+    <select id="getList" resultType="com.demo.lost_found.pojo.LostAndFound">
+        select *
+        from lost_and_found
+        where check_status = '通过'
+        order by pickup_time desc;
+    </select>
+    <select id="getById" resultType="com.demo.lost_found.pojo.LostAndFound">
+        select *
+        from lost_and_found
+        where check_status = '通过'
+          and id = #{id};
+    </select>
+</mapper>

@@ -9,13 +9,16 @@ import com.demo.lost_found.contants.RedisConstants;
 import com.demo.lost_found.mapper.UserMapper;
 import com.demo.lost_found.pojo.BlackList;
 import com.demo.lost_found.pojo.User;
+import com.demo.lost_found.pojo.context.UserContext;
 import com.demo.lost_found.pojo.form.PhoneCodeForm;
+import com.demo.lost_found.pojo.vo.ContactWayVO;
 import com.demo.lost_found.rep.BaseResponse;
 import com.demo.lost_found.service.BlackListService;
 import com.demo.lost_found.service.UserService;
 import com.demo.lost_found.utils.Auth0JwtUtils;
 import com.demo.lost_found.utils.VerificationCodeUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +26,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.aliyun.teautil.Common.assertAsString;
@@ -119,6 +124,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByPhone(String phone) {
         return userMapper.selectByPhone(phone);
+    }
+
+    @Override
+    public BaseResponse<List<ContactWayVO>> getContactWay() {
+        List<ContactWayVO> list = new ArrayList<>();
+        User currentUser = UserContext.getCurrentUser();
+        if (StringUtils.isNotEmpty(currentUser.getPhone())) {
+            list.add(new ContactWayVO(0, "手机号"));
+        }
+        if (StringUtils.isNotEmpty(currentUser.getWechatId())) {
+            list.add(new ContactWayVO(1, "微信号"));
+        }
+        return new BaseResponse<>(200, "获取成功", list);
     }
 
     @Override

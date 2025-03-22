@@ -44,6 +44,10 @@ public class FileServiceImpl implements FileService {
             objectName = MinioConstants.USER_CAROUSEL_IMAGE + "/" + System.currentTimeMillis() + "_" + originalFilename;
         } else if ("promotionalVideos".equals(type)) {
             objectName = MinioConstants.PROMOTIONAL_VIDEOS + "/" + System.currentTimeMillis() + "_" + originalFilename;
+        } else if ("lostAndFound".equals(type)) {
+            objectName = MinioConstants.LOST_AND_FOUND + "/" + System.currentTimeMillis() + "_" + originalFilename;
+        } else if ("lostAndReport".equals(type)) {
+            objectName = MinioConstants.LOST_AND_REPORT + "/" + System.currentTimeMillis() + "_" + originalFilename;
         }
 
         try (InputStream inputStream = file.getInputStream()) {
