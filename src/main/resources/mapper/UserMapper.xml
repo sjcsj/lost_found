@@ -14,6 +14,27 @@
         #{createdAt}
         );
     </insert>
+    <update id="updateAvatar">
+        update user
+        set avatar = #{avatar}
+        where id = #{id};
+    </update>
+    <update id="update">
+        update user
+        set wechat_id = #{wechatId},
+            gender    = #{gender}
+        where id = #{id};
+    </update>
+    <update id="unBindPhone">
+        update user
+        set phone = null
+        where phone = #{phone};
+    </update>
+    <update id="bindPhone">
+        update user
+        set phone = #{phone}
+        where id = #{id};
+    </update>
 
     <select id="selectByUsername" resultType="com.demo.lost_found.pojo.User">
         select *

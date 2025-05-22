@@ -6,6 +6,11 @@
         insert into goods_found (lost_and_found_id, image_url)
         values (#{id}, #{imageUrl});
     </insert>
+    <delete id="delete">
+        delete
+        from goods_found
+        where lost_and_found_id = #{id};
+    </delete>
     <select id="getById" resultType="java.lang.String">
         select image_url
         from goods_found

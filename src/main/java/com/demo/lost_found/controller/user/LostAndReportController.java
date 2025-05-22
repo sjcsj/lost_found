@@ -6,6 +6,8 @@ import com.demo.lost_found.pojo.LostAndFound;
 import com.demo.lost_found.pojo.LostAndReport;
 import com.demo.lost_found.pojo.form.LostAndFoundAddForm;
 import com.demo.lost_found.pojo.form.LostAndReportAddForm;
+import com.demo.lost_found.pojo.vo.LostAndFoundVO;
+import com.demo.lost_found.pojo.vo.LostAndReportVO;
 import com.demo.lost_found.rep.BaseResponse;
 import com.demo.lost_found.service.LostAndReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,14 @@ public class LostAndReportController {
     @GetMapping("/submitComment")
     public BaseResponse<String> submitComment(@RequestParam("id") Integer id, @RequestParam("comment") String comment) {
         return lostAndReportService.submitComment(id, comment);
+    }
+
+    /**
+     * 获取当前用户的物品挂失信息，包括通过、未通过、待审核
+     */
+    @GetMapping("/getAllOfCurrentUser")
+    public BaseResponse<LostAndReportVO> getAllOfCurrentUser() {
+        return lostAndReportService.getAllOfCurrentUser();
     }
 
 }

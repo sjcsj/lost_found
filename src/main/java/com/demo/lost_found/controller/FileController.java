@@ -64,6 +64,22 @@ public class FileController {
     }
 
     /**
+     * 公告图片上传，返回url，专门用于上传公告图片
+     */
+    @PostMapping("/uploadAnnouncementImage")
+    public BaseResponse<String> uploadAnnouncementImage(@RequestPart("file") MultipartFile file) throws IOException {
+        return fileService.upload(file, "announcementImage");
+    }
+
+    /**
+     * 智能识别图片上传，返回url，专门用于上传智能识别图片
+     */
+    @PostMapping("/uploadRecognizeImage")
+    public BaseResponse<String> uploadRecognizeImage(@RequestPart("file") MultipartFile file) throws IOException {
+        return fileService.upload(file, "recognizeImage");
+    }
+
+    /**
      * 删除文件，适用于所有图片类型
      */
     @GetMapping("/delete")

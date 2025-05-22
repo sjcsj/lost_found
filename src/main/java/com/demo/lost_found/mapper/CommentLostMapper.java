@@ -11,4 +11,6 @@ public interface CommentLostMapper {
     List<CommentLost> getCommentById(@Param("id") Integer id);
 
     void add(@Param("id") Integer id, @Param("userId") Integer userId, @Param("comment") String comment);
+
+    void delete(Integer id);
 }

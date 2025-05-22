@@ -3,6 +3,7 @@ package com.demo.lost_found.controller.user;
 import com.demo.lost_found.pojo.CommentFound;
 import com.demo.lost_found.pojo.LostAndFound;
 import com.demo.lost_found.pojo.form.LostAndFoundAddForm;
+import com.demo.lost_found.pojo.vo.LostAndFoundVO;
 import com.demo.lost_found.rep.BaseResponse;
 import com.demo.lost_found.service.CommentFoundService;
 import com.demo.lost_found.service.LostAndFoundService;
@@ -69,6 +70,14 @@ public class LostAndFoundController {
     @GetMapping("/submitComment")
     public BaseResponse<String> submitComment(@RequestParam("id") Integer id, @RequestParam("comment") String comment) {
         return lostAndFoundService.submitComment(id, comment);
+    }
+
+    /**
+     * 获取当前用户的失物招领信息，包括通过、未通过、待审核
+     */
+    @GetMapping("/getAllOfCurrentUser")
+    public BaseResponse<LostAndFoundVO> getAllOfCurrentUser() {
+        return lostAndFoundService.getAllOfCurrentUser();
     }
 }
 

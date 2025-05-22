@@ -1,0 +1,40 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.lost_found.mapper.AnnouncementAdminMapper">
+    <insert id="add">
+        insert into announcement (title, content, image_url, created_by, updated_at)
+        values (#{title}, #{content}, #{imageUrl}, #{createdBy}, #{updatedAt});
+    </insert>
+    <update id="update">
+        update announcement
+        set title      = #{title},
+            content    = #{content},
+            created_by = #{createdBy},
+            updated_at = #{updatedAt}
+        where id = #{id};
+    </update>
+    <delete id="delete">
+        delete
+        from announcement
+        where id = #{id};
+    </delete>
+
+    <select id="getList" resultType="com.demo.lost_found.pojo.Announcement">
+        select * from announcement where 1 = 1
+        <if test="title != null and title != ''">
+            and title like CONCAT('%', #{title}, '%')
+        </if>
+        <if test="userId != null">
+            and created_by = #{userId}
+        </if>
+        order by updated_at desc;
+    </select>
+    <select id="getUserList" resultType="java.lang.Integer">
+        select distinct created_by from announcement;
+    </select>
+    <select id="getById" resultType="com.demo.lost_found.pojo.Announcement">
+        select *
+        from announcement
+        where id = #{id};
+    </select>
+</mapper>

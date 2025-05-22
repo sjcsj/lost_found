@@ -30,6 +30,8 @@ public class WhiteList {
         WHITE_LIST.add("/file/delete");
         WHITE_LIST.add("/file/uploadLostAndFound");
         WHITE_LIST.add("/file/uploadLostAndReport");
+        WHITE_LIST.add("/file/uploadAnnouncementImage");
+        WHITE_LIST.add("/file/uploadRecognizeImage");
         /**
          * 轮播图接口
          */
@@ -44,5 +46,18 @@ public class WhiteList {
          * 物品类别接口
          */
         WHITE_LIST.add("/admin/category/getList");
+        /**
+         * 公告管理接口
+         */
+        WHITE_LIST.add("/admin/announcement/getList");
+        WHITE_LIST.add("/admin/announcement/getById");
+        /**
+         * 修改密码接口
+         */
+        WHITE_LIST.add("/admin/user/changePasswordForm");
+        /**
+         * 退出登录接口
+         */
+        WHITE_LIST.add("/admin/user/logout");
     }
 }

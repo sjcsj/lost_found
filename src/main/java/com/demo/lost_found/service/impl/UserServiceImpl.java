@@ -86,7 +86,8 @@ public class UserServiceImpl implements UserService {
         map.put("id", user.getId());
         String token = Auth0JwtUtils.sign(map);
         // 将token存放到redis，value设置为用户id
-        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token, user1.getId() + "", 30, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token,
+                user1.getId() + "", 30, TimeUnit.MINUTES);
         return new BaseResponse(200, "登录成功", token);
     }
 
@@ -117,7 +118,8 @@ public class UserServiceImpl implements UserService {
         map.put("id", user.getId());
         String token = Auth0JwtUtils.sign(map);
         // 将token存放到redis，value设置为用户id
-        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token, user.getId() + "", 30, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(RedisConstants.TOKEN_PREFIX + token,
+                user.getId() + "", 30, TimeUnit.MINUTES);
         return new BaseResponse<>(200, "登录成功", token);
     }
 
@@ -140,6 +142,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public BaseResponse updateAvatar(User user) {
+        userMapper.updateAvatar(user);
+        return new BaseResponse(200, "修改成功", null);
+    }
+
+    @Override
+    public BaseResponse update(User user) {
+        userMapper.update(user);
+        return new BaseResponse(200, "修改成功", null);
+    }
+
+    @Override
+    public BaseResponse unBindPhone(PhoneCodeForm phoneCodeForm) {
+        String phone = phoneCodeForm.getPhone();
+        String code = phoneCodeForm.getCode();
+        // 查询redis中是否有该手机号
+        String redisCode = stringRedisTemplate.opsForValue().get(RedisConstants.USER_PHONE_CODE_UNBIND + phone);
+        if (redisCode == null) {
+            return new BaseResponse<>(400, "验证码输入错误或已失效", null);
+        }
+        if (!code.equals(redisCode)) {
+            return new BaseResponse<>(400, "验证码输入错误", null);
+        }
+        // 验证码验证正确，解绑手机号
+        userMapper.unBindPhone(phone);
+        return new BaseResponse(200, "解绑成功", null);
+    }
+
+    @Override
+    public BaseResponse bindPhone(PhoneCodeForm phoneCodeForm) {
+        String phone = phoneCodeForm.getPhone();
+        String code = phoneCodeForm.getCode();
+        // 查询redis中是否有该手机号
+        String redisCode = stringRedisTemplate.opsForValue().get(RedisConstants.USER_PHONE_CODE_BIND + phone);
+        if (redisCode == null) {
+            return new BaseResponse<>(400, "验证码输入错误或已失效", null);
+        }
+        if (!code.equals(redisCode)) {
+            return new BaseResponse<>(400, "验证码输入错误", null);
+        }
+        // 验证码验证正确，绑定手机号
+        userMapper.bindPhone(phoneCodeForm);
+        return new BaseResponse(200, "绑定成功", null);
+    }
+
+    @Override
     public BaseResponse register(User user) {
         // 判断用户名是否唯一，不能和普通用户管理员重名，也不能跟已删除的用户重名
         User user1 = userMapper.selectByUsernameAllRole(user.getUsername());
@@ -158,7 +206,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendPhoneCode(String phone) {
+    public void sendPhoneCode(String phone, String type) {
         // 生成验证码
         String code = VerificationCodeUtils.generateNumericCode();
         log.info("生成的验证码为:{}", code);
@@ -183,7 +231,7 @@ public class UserServiceImpl implements UserService {
         }
         // 将手机号和验证码存到redis中，方便后续验证，TTL为1分钟
         log.info("将验证码存入redis");
-        stringRedisTemplate.opsForValue().set(RedisConstants.USER_PHONE_CODE_LOGIN + phone, code, 1, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(type + phone, code, 1, TimeUnit.MINUTES);
     }
 
 }

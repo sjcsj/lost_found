@@ -25,4 +25,8 @@ public interface UserAdminMapper {
     List<Integer> selectByUsernameFuzzy(@Param("username") String username);
 
     String getUsernameById(@Param("id") Integer userId);
+
+    Integer getCount();
+
+    Integer getCount1();
 }

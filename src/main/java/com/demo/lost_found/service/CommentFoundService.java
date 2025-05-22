@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface CommentFoundService {
     List<CommentFound> getCommentById(Integer id);
+
+    void delete(Integer id);
 }

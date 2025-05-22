@@ -5,6 +5,11 @@
         insert into goods_lost (lost_and_report_id, image_url)
         values (#{id}, #{imageUrl});
     </insert>
+    <delete id="delete">
+        delete
+        from goods_lost
+        where lost_and_report_id = #{id};
+    </delete>
 
     <select id="getById" resultType="java.lang.String">
         select image_url

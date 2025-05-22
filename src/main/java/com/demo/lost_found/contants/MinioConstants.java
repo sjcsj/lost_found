@@ -30,4 +30,13 @@ public class MinioConstants {
      */
     public static final String LOST_AND_REPORT = "lost-and-report";
 
+    /**
+     * 存放公告图片
+     */
+    public static final String ANNOUNCEMENT_IMAGE = "announcement-image";
+
+    /**
+     * 存放智能识别图片
+     */
+    public static final String RECOGNIZE_IMAGE = "recognize-image";
 }

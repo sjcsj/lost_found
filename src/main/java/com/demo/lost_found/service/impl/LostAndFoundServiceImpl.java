@@ -9,14 +9,20 @@ import com.demo.lost_found.pojo.CommentFound;
 import com.demo.lost_found.pojo.LostAndFound;
 import com.demo.lost_found.pojo.User;
 import com.demo.lost_found.pojo.context.UserContext;
+import com.demo.lost_found.pojo.form.BlackInfoForm;
 import com.demo.lost_found.pojo.form.LostAndFoundAddForm;
+import com.demo.lost_found.pojo.form.ReviewForm;
+import com.demo.lost_found.pojo.vo.LostAndFoundVO;
 import com.demo.lost_found.rep.BaseResponse;
+import com.demo.lost_found.service.BlackListService;
 import com.demo.lost_found.service.CommentFoundService;
 import com.demo.lost_found.service.LostAndFoundService;
 import com.demo.lost_found.service.UserAdminService;
+import com.demo.lost_found.utils.BaiduUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -36,8 +42,15 @@ public class LostAndFoundServiceImpl implements LostAndFoundService {
 
     @Autowired
     private UserAdminService userAdminService;
+
     @Autowired
     private CommentFoundMapper commentFoundMapper;
+
+    @Autowired
+    private BaiduUtil baiduUtil;
+
+    @Autowired
+    private BlackListService blackListService;
 
     @Override
     public BaseResponse<String> add(LostAndFoundAddForm lostAndFoundAddForm) {
@@ -108,8 +121,91 @@ public class LostAndFoundServiceImpl implements LostAndFoundService {
     @Override
     public BaseResponse<String> submitComment(Integer id, String comment) {
         Integer userId = UserContext.getCurrentUser().getId();
+        // 验证评论是否合规
+        boolean isOK = baiduUtil.textDetection(comment);
+        if (!isOK) {
+            // 不合规，封禁该用户30分钟
+            BlackInfoForm blackInfoForm = new BlackInfoForm();
+            blackInfoForm.setUserId(userId);
+            Date date = DateUtil.offsetMinute(new Date(), 30);
+            String formattedTime = DateUtil.formatDateTime(date);
+            blackInfoForm.setDeadline(formattedTime);
+            blackInfoForm.setReason("发布不当评论");
+            blackInfoForm.setNotes("发布评论前请仔细确认是否恰当");
+            blackListService.addBlackInfo(blackInfoForm);
+            return new BaseResponse<>(400, "发布失败", null);
+        }
         commentFoundMapper.add(id, userId, comment);
         return new BaseResponse<>(200, "发布成功", null);
+    }
+
+    @Override
+    public BaseResponse<List<LostAndFound>> getAll(LostAndFound lostAndFound) {
+        List<LostAndFound> list = lostAndFoundMapper.getAll(lostAndFound);
+        for (LostAndFound item : list) {
+            // 查询物品类别
+            item.setCategory(categoryAdminMapper.getById(item.getCategoryId()).getCategoryName());
+            // 查询物品图片
+            item.setImageUrl(goodsFoundMapper.getById(item.getId()));
+        }
+        return new BaseResponse<>(200, "获取成功", list);
+    }
+
+    @Override
+    public BaseResponse update(LostAndFound lostAndFound) {
+        // 原类别数量减一，修改后的类别数量加一
+        Integer categoryId = lostAndFoundMapper.getCategoryIdById(lostAndFound.getId());
+        categoryAdminMapper.decr(categoryId);
+        lostAndFoundMapper.update(lostAndFound);
+        categoryAdminMapper.incr(lostAndFound.getCategoryId());
+        return new BaseResponse(200, "修改成功", null);
+    }
+
+    @Override
+    public BaseResponse delete(Integer id) {
+        // 类别数量减一
+        Integer categoryId = lostAndFoundMapper.getCategoryIdById(id);
+        categoryAdminMapper.decr(categoryId);
+        // 评论删除
+        commentFoundService.delete(id);
+        // 图片删除
+        goodsFoundMapper.delete(id);
+        // 删除失物招领信息
+        lostAndFoundMapper.deleteById(id);
+        return new BaseResponse(200, "删除成功", null);
+    }
+
+    @Override
+    public BaseResponse review(ReviewForm reviewForm) {
+        // 修改审核状态
+        lostAndFoundMapper.review(reviewForm);
+        return new BaseResponse(200, "审核完成", null);
+    }
+
+    @Override
+    public BaseResponse<LostAndFoundVO> getAllOfCurrentUser() {
+        User user = UserContext.getCurrentUser();
+        // 获取当前用户的所有失物招领信息
+        List<LostAndFound> list = lostAndFoundMapper.getAllByUserId(user.getId());
+        // 填充图片和类别
+        for (LostAndFound item : list) {
+            // 查询物品类别
+            item.setCategory(categoryAdminMapper.getById(item.getCategoryId()).getCategoryName());
+            // 查询物品图片
+            item.setImageUrl(goodsFoundMapper.getById(item.getId()));
+        }
+        // 分成三部分
+        LostAndFoundVO lostAndFoundVO = new LostAndFoundVO();
+        for (LostAndFound item : list) {
+            if ("通过".equals(item.getCheckStatus())) {
+                lostAndFoundVO.approved.add(item);
+            } else if ("不通过".equals(item.getCheckStatus())) {
+                lostAndFoundVO.rejected.add(item);
+            } else if ("待审核".equals(item.getCheckStatus())) {
+                lostAndFoundVO.pending.add(item);
+            }
+        }
+        return new BaseResponse<>(200, "获取成功", lostAndFoundVO);
     }
 }
 

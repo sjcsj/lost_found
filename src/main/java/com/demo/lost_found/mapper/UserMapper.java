@@ -1,6 +1,7 @@
 package com.demo.lost_found.mapper;
 
 import com.demo.lost_found.pojo.User;
+import com.demo.lost_found.pojo.form.PhoneCodeForm;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,4 +16,11 @@ public interface UserMapper {
 
     User selectByUsernameAllRole(String username);
 
+    void updateAvatar(User user);
+
+    void update(User user);
+
+    void unBindPhone(String phone);
+
+    void bindPhone(PhoneCodeForm phoneCodeForm);
 }

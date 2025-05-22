@@ -24,6 +24,28 @@
         set status = '已找回'
         where id = #{id};
     </update>
+    <update id="update">
+        update lost_and_report
+        set name        = #{name},
+            category_id = #{categoryId},
+            detail      = #{detail}
+        where id = #{id};
+    </update>
+    <update id="review">
+        update lost_and_report set
+        <if test="checkStatus != null and checkStatus != ''">
+            check_status = #{checkStatus}
+        </if>
+        <if test="failureReason != null and failureReason != ''">
+            , failure_reason = #{failureReason}
+        </if>
+        where id = #{id};
+    </update>
+    <delete id="deleteById">
+        delete
+        from lost_and_report
+        where id = #{id};
+    </delete>
 
     <select id="getList" resultType="com.demo.lost_found.pojo.LostAndReport">
         select *
@@ -36,5 +58,56 @@
         from lost_and_report
         where check_status = '通过'
           and id = #{id};
+    </select>
+    <select id="getAll" resultType="com.demo.lost_found.pojo.LostAndReport">
+        select *
+        from lost_and_report where 1 = 1
+        <if test="name != null and name != ''">
+            and name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="checkStatus != null and checkStatus != ''">
+            and check_status = #{checkStatus}
+        </if>
+        order by created_at desc
+    </select>
+    <select id="getCategoryIdById" resultType="java.lang.Integer">
+        select category_id
+        from lost_and_report
+        where id = #{id}
+    </select>
+    <select id="getAllByUserId" resultType="com.demo.lost_found.pojo.LostAndReport">
+        select *
+        from lost_and_report
+        where user_id = #{id};
+    </select>
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(*)
+        from lost_and_report
+        where status = '已找回'
+          and check_status = '通过';
+    </select>
+    <select id="getCount1" resultType="java.lang.Integer">
+        select count(*)
+        from lost_and_report
+        where status = '未找回'
+          and check_status = '通过';
+    </select>
+    <select id="getCount2" resultType="java.lang.Integer">
+        select count(*)
+        from lost_and_report
+        where check_status = '通过';
+    </select>
+    <select id="getCount3" resultType="java.lang.Integer">
+        select count(*)
+        from lost_and_report
+        where check_status = '不通过';
+    </select>
+    <select id="getCount4" resultType="java.lang.Integer">
+        select count(*)
+        from lost_and_report
+        where check_status = '待审核';
     </select>
 </mapper>

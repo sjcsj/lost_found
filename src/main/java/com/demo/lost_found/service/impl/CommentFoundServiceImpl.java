@@ -19,4 +19,9 @@ public class CommentFoundServiceImpl implements CommentFoundService {
     public List<CommentFound> getCommentById(Integer id) {
         return commentFoundMapper.getCommentById(id);
     }
+
+    @Override
+    public void delete(Integer id) {
+        commentFoundMapper.delete(id);
+    }
 }

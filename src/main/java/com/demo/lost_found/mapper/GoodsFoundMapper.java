@@ -8,4 +8,6 @@ public interface GoodsFoundMapper {
     void add(@Param("id") Integer id, @Param("imageUrl") String imageUrl);
 
     String getById(@Param("id") Integer id);
+
+    void delete(Integer id);
 }

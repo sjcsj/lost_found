@@ -5,6 +5,11 @@
         insert into comment_lost (lost_and_report_id, user_id, comment)
         values (#{id}, #{userId}, #{comment});
     </insert>
+    <delete id="delete">
+        delete
+        from comment_lost
+        where lost_and_report_id = #{id}
+    </delete>
 
     <select id="getCommentById" resultType="com.demo.lost_found.pojo.CommentLost">
         select *

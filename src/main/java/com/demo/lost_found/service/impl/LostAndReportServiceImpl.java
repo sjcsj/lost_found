@@ -7,14 +7,21 @@ import com.demo.lost_found.mapper.GoodsLostMapper;
 import com.demo.lost_found.mapper.LostAndReportMapper;
 import com.demo.lost_found.pojo.*;
 import com.demo.lost_found.pojo.context.UserContext;
+import com.demo.lost_found.pojo.form.BlackInfoForm;
 import com.demo.lost_found.pojo.form.LostAndReportAddForm;
+import com.demo.lost_found.pojo.form.ReviewForm;
+import com.demo.lost_found.pojo.vo.LostAndFoundVO;
+import com.demo.lost_found.pojo.vo.LostAndReportVO;
 import com.demo.lost_found.rep.BaseResponse;
+import com.demo.lost_found.service.BlackListService;
 import com.demo.lost_found.service.CommentLostService;
 import com.demo.lost_found.service.LostAndReportService;
 import com.demo.lost_found.service.UserAdminService;
+import com.demo.lost_found.utils.BaiduUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,6 +44,12 @@ public class LostAndReportServiceImpl implements LostAndReportService {
 
     @Autowired
     private CommentLostMapper commentLostMapper;
+
+    @Autowired
+    private BaiduUtil baiduUtil;
+
+    @Autowired
+    private BlackListService blackListService;
 
     @Override
     public BaseResponse<List<LostAndReport>> getList() {
@@ -108,7 +121,90 @@ public class LostAndReportServiceImpl implements LostAndReportService {
     @Override
     public BaseResponse<String> submitComment(Integer id, String comment) {
         Integer userId = UserContext.getCurrentUser().getId();
+        // 验证评论是否合规
+        boolean isOK = baiduUtil.textDetection(comment);
+        if (!isOK) {
+            // 不合规，封禁该用户30分钟
+            BlackInfoForm blackInfoForm = new BlackInfoForm();
+            blackInfoForm.setUserId(userId);
+            Date date = DateUtil.offsetMinute(new Date(), 30);
+            String formattedTime = DateUtil.formatDateTime(date);
+            blackInfoForm.setDeadline(formattedTime);
+            blackInfoForm.setReason("发布不当评论");
+            blackInfoForm.setNotes("发布评论前请仔细确认是否恰当");
+            blackListService.addBlackInfo(blackInfoForm);
+            return new BaseResponse<>(400, "发布失败", null);
+        }
         commentLostMapper.add(id, userId, comment);
         return new BaseResponse<>(200, "发布成功", null);
+    }
+
+    @Override
+    public BaseResponse<List<LostAndReport>> getAll(LostAndReport lostAndReport) {
+        List<LostAndReport> list = lostAndReportMapper.getAll(lostAndReport);
+        for (LostAndReport item : list) {
+            // 查询物品类别
+            item.setCategory(categoryAdminMapper.getById(item.getCategoryId()).getCategoryName());
+            // 查询物品图片
+            item.setImageUrl(goodsLostMapper.getById(item.getId()));
+        }
+        return new BaseResponse<>(200, "获取成功", list);
+    }
+
+    @Override
+    public BaseResponse update(LostAndReport lostAndReport) {
+        // 原类别数量减一，修改后的类别数量加一
+        Integer categoryId = lostAndReportMapper.getCategoryIdById(lostAndReport.getId());
+        categoryAdminMapper.decr(categoryId);
+        lostAndReportMapper.update(lostAndReport);
+        categoryAdminMapper.incr(lostAndReport.getCategoryId());
+        return new BaseResponse(200, "修改成功", null);
+    }
+
+    @Override
+    public BaseResponse delete(Integer id) {
+        // 类别数量减一
+        Integer categoryId = lostAndReportMapper.getCategoryIdById(id);
+        categoryAdminMapper.decr(categoryId);
+        // 评论删除
+        commentLostService.delete(id);
+        // 图片删除
+        goodsLostMapper.delete(id);
+        // 删除失物招领信息
+        lostAndReportMapper.deleteById(id);
+        return new BaseResponse(200, "删除成功", null);
+    }
+
+    @Override
+    public BaseResponse review(ReviewForm reviewForm) {
+        // 修改审核状态
+        lostAndReportMapper.review(reviewForm);
+        return new BaseResponse(200, "审核完成", null);
+    }
+
+    @Override
+    public BaseResponse<LostAndReportVO> getAllOfCurrentUser() {
+        User user = UserContext.getCurrentUser();
+        // 获取当前用户的所有物品挂失信息
+        List<LostAndReport> list = lostAndReportMapper.getAllByUserId(user.getId());
+        // 填充图片和类别
+        for (LostAndReport item : list) {
+            // 查询物品类别
+            item.setCategory(categoryAdminMapper.getById(item.getCategoryId()).getCategoryName());
+            // 查询物品图片
+            item.setImageUrl(goodsLostMapper.getById(item.getId()));
+        }
+        // 分成三部分
+        LostAndReportVO lostAndReportVO = new LostAndReportVO();
+        for (LostAndReport item : list) {
+            if ("通过".equals(item.getCheckStatus())) {
+                lostAndReportVO.approved.add(item);
+            } else if ("不通过".equals(item.getCheckStatus())) {
+                lostAndReportVO.rejected.add(item);
+            } else if ("待审核".equals(item.getCheckStatus())) {
+                lostAndReportVO.pending.add(item);
+            }
+        }
+        return new BaseResponse<>(200, "获取成功", lostAndReportVO);
     }
 }

@@ -8,4 +8,6 @@ public interface GoodsLostMapper {
     String getById(@Param("id") Integer id);
 
     void add(@Param("id") Integer id, @Param("imageUrl") String imageUrl);
+
+    void delete(Integer id);
 }

@@ -20,6 +20,11 @@
         set count = count + 1
         where id = #{id};
     </update>
+    <update id="decr">
+        update category
+        set count = count - 1
+        where id = #{id};
+    </update>
     <delete id="delete">
         delete
         from category

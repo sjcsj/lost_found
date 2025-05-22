@@ -19,4 +19,9 @@ public class CommentLostServiceImpl implements CommentLostService {
     public List<CommentLost> getCommentById(Integer id) {
         return commentLostMapper.getCommentById(id);
     }
+
+    @Override
+    public void delete(Integer id) {
+        commentLostMapper.delete(id);
+    }
 }

@@ -25,4 +25,9 @@ public class RedisConstants {
      */
     public static final String USER_PHONE_CODE_BIND = "user:phone:code:bind:";
 
+    /**
+     * 存放用户手机号和对应的验证码(解绑用)
+     */
+    public static final String USER_PHONE_CODE_UNBIND = "user:phone:code:unbind:";
+
 }
